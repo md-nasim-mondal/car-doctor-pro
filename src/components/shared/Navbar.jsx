@@ -1,32 +1,14 @@
+"use client"
 import { CiSearch } from "react-icons/ci";
 import { BsHandbag } from "react-icons/bs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
-  const navItems = [
-    {
-      title: "Home",
-      path: "/",
-    },
-    {
-      title: "About",
-      path: "/about",
-    },
-    {
-      title: "Services",
-      path: "/services",
-    },
-    {
-      title: "Blog",
-      path: "/blog",
-    },
-    {
-      title: "Contact",
-      path: "/contact",
-    },
-  ];
+  const session = useSession();
+  console.log(session);
   return (
     <div className='bg-base-100 text-slate-900 border-b-2'>
       <div className='navbar container mx-auto max-w-7xl'>
@@ -85,13 +67,38 @@ const Navbar = () => {
             <CiSearch className='text-xl' />
           </div>
           <a className='btn btn-outline btn-primary px-8'>Appointment</a>
-          <Link href={'/login'} >
-          <button className="btn btn-primary ml-3">Login</button>
-          </Link>
+          {
+            !session?.data ? <Link href={'/login'} className="btn btn-primary ml-3">Login
+          </Link> : <button onClick={() => signOut()} className="btn btn-warning ml-3">Logout</button>
+          }
+          
         </div>
       </div>
     </div>
   );
 };
+
+const navItems = [
+  {
+    title: "Home",
+    path: "/",
+  },
+  {
+    title: "About",
+    path: "/about",
+  },
+  {
+    title: "Services",
+    path: "/services",
+  },
+  {
+    title: "Blog",
+    path: "/blog",
+  },
+  {
+    title: "Contact",
+    path: "/contact",
+  },
+];
 
 export default Navbar;
