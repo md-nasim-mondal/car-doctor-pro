@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/connectDB";
 import NextAuth from "next-auth/next";
 import CredentialProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github"
+import GitHubProvider from "next-auth/providers/github";
 
 const handler = NextAuth({
   session: {
@@ -18,15 +18,20 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         const { email, password } = credentials;
-        if(!email || !password){
-          return null
+        if (!email || !password) {
+          return null;
         }
         const db = await connectDB();
-        const currentUser = await db.collection('users').findOne({email: email})
+        const currentUser = await db
+          .collection("users")
+          .findOne({ email: email });
         if (!currentUser) {
           return null;
         }
-        const passwordMatched = bcrypt.compareSync(password, currentUser?.password)
+        const passwordMatched = bcrypt.compareSync(
+          password,
+          currentUser?.password
+        );
         if (!passwordMatched) {
           return null;
         }
@@ -35,15 +40,37 @@ const handler = NextAuth({
     }),
     GoogleProvider({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     }),
     GitHubProvider({
       clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-      clientSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET
-    })
+      clientSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET,
+    }),
   ],
   pages: {
     signIn: "/login",
+  },
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account.provider === "google" || account.provider === "github") {
+        const { name, email, image } = user;
+        try {
+          const db = await connectDB();
+          const userCollection = db.collection("users");
+          const userExist = await userCollection.findOne({ email });
+          if (!userExist) {
+            const res = await userCollection.insetOne(user);
+            return user;
+          } else {
+            return user;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return user;
+      }
+    },
   },
 });
 
