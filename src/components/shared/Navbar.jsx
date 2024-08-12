@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { CiSearch } from "react-icons/ci";
 import { BsHandbag } from "react-icons/bs";
 import Image from "next/image";
@@ -67,11 +67,26 @@ const Navbar = () => {
             <CiSearch className='text-xl' />
           </div>
           <a className='btn btn-outline btn-primary px-8'>Appointment</a>
-          {
-            !session?.data ? <Link href={'/login'} className="btn btn-primary ml-3">Login
-          </Link> : <button onClick={() => signOut()} className="btn btn-warning ml-3">Logout</button>
-          }
-          
+          {!session?.data ? (
+            <Link href={"/login"} className='btn btn-primary ml-3'>
+              Login
+            </Link>
+          ) : (
+            <>
+              <div>
+                <Image
+                  alt={session?.data?.user?.name}
+                  src={session?.data?.user?.image}
+                  height={50}
+                  width={50}></Image>
+              </div>
+              <button
+                onClick={() => signOut()}
+                className='btn btn-warning ml-3'>
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

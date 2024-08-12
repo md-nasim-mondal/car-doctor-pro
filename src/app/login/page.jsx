@@ -1,10 +1,10 @@
 "use client";
+import SocialSignIn from "@/components/shared/SocialSignIn";
 import {signIn} from "next-auth/react"
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { BsGithub, BsGoogle } from "react-icons/bs";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -61,14 +61,7 @@ const LoginPage = () => {
           </form>
           <div>
             <h6 className='my-12 text-center'>or sign in with</h6>
-            <div className='flex items-center justify-center space-x-3'>
-              <button className='btn flex items-center justify-center text-green-600'>
-                <BsGoogle />
-              </button>
-              <button className='btn flex items-center justify-center text-primary'>
-                <BsGithub />
-              </button>
-            </div>
+            <SocialSignIn/>
             <h6 className='my-12 text-center'>
               Not have an account?{" "}
               <Link href={"/signup"} className='text-primary font-semibold'>
